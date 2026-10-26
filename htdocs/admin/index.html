@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>پنل مدیریت · Forge Infinite</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#12100D">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="admin.css?v=2.0.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap"></noscript>
+</head>
+<body>
+
+<!-- ===== login ===== -->
+<section id="loginView" class="login-wrap">
+  <form id="loginForm" class="login-card" autocomplete="off">
+    <div class="login-logo" aria-hidden="true">🔥</div>
+    <h1>پنل مدیریت Forge Infinite</h1>
+    <p class="sub">با حساب ادمین بازی وارد شوید.</p>
+    <label>نام کاربری<input id="lgUser" required autocomplete="username" dir="ltr"></label>
+    <label>رمز عبور<input id="lgPass" type="password" required autocomplete="current-password" dir="ltr"></label>
+    <button class="btn btn-primary btn-block" type="submit">ورود</button>
+    <p id="lgErr" class="err" role="alert"></p>
+    <p class="fine">دسترسی فقط برای نقش‌های admin و mod (فقط‌خواندنی) است.<br>
+    <a href="../">← بازگشت به بازی</a></p>
+  </form>
+</section>
+
+<!-- ===== app ===== -->
+<div id="appView" class="app hidden">
+  <header class="topbar">
+    <div class="brand"><span class="brand-ic">🔥</span> Forge Infinite <em>Admin</em></div>
+    <div class="top-actions">
+      <span id="meChip" class="chip"></span>
+      <a class="btn btn-sm btn-ghost" href="../" target="_blank" rel="noopener">🎮 بازی</a>
+      <button id="logoutBtn" class="btn btn-sm btn-ghost">خروج</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-view="overview" class="on">📊 نمای کلی</button>
+    <button data-view="economy">💰 اقتصاد</button>
+    <button data-view="retention">📈 ریتنشن</button>
+    <button data-view="players">👥 بازیکنان</button>
+    <button data-view="events">🧾 رویدادها</button>
+    <button data-view="ledger">📒 دفتر کل</button>
+    <button data-view="system">🛡️ سیستم</button>
+  </nav>
+
+  <main id="content" class="content" aria-live="polite">
+    <div class="loading">در حال بارگذاری…</div>
+  </main>
+</div>
+
+<!-- player drawer -->
+<div id="drawer" class="drawer-back hidden">
+  <aside class="drawer" role="dialog" aria-modal="true" aria-label="جزئیات بازیکن">
+    <button class="drawer-x" id="drawerX" aria-label="بستن">✕</button>
+    <div id="drawerBody">…</div>
+  </aside>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script src="admin.js?v=2.0.0"></script>
+</body>
+</html>

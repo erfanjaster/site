@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<title>Forge Infinite — an idle forge that never sleeps</title>
+<meta name="description" content="Forge Infinite is a free browser idle game. Build an endless forge, collect cosmetics, prestige for permanent power. No install, no ads, no pay-to-win.">
+<meta name="theme-color" content="#14120F">
+<meta name="color-scheme" content="dark light">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Forge Infinite">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Open Graph / social card -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Forge Infinite">
+<meta property="og:description" content="An idle forge that keeps burning while you're gone. Free in your browser.">
+<meta property="og:image" content="assets/og.svg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<!-- Critical paint: match the app theme before CSS arrives (no white flash) -->
+<style>html{background:#080605}#boot{position:fixed;inset:0;display:grid;place-items:center;background:#080605;color:#C2B6A4;font-family:system-ui,sans-serif;z-index:200}</style>
+<link rel="stylesheet" href="css/style.css?v=2.0.0">
+
+<!-- Fonts are optional: the system stack below is the real fallback, so the game
+     renders instantly even if the network is blocked. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap"></noscript>
+</head>
+<body>
+
+<div id="boot">
+  <div style="text-align:center">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true" style="width:76px;height:76px;margin:0 auto">
+      <defs><linearGradient id="bootg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#FFB020"/><stop offset=".45" stop-color="#FF7A18"/>
+        <stop offset="1" stop-color="#C2410C"/></linearGradient></defs>
+      <path d="M22 22c-7 0-12 4.5-12 10s5 10 12 10c6 0 9-4 12-8 3 4 6 8 12 8 7 0 12-4.5 12-10s-5-10-12-10c-6 0-9 4-12 8-3-4-6-8-12-8z"
+            fill="none" stroke="url(#bootg)" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M18 50h28l-4 8H22z" fill="url(#bootg)"/>
+    </svg>
+    <p>Lighting the forge…</p>
+  </div>
+</div>
+
+<div id="app" aria-live="polite"></div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div id="floaters" aria-hidden="true"></div>
+<div id="flash" aria-hidden="true"></div>
+<div id="toasts" aria-live="polite" aria-atomic="false"></div>
+<div id="modals"></div>
+
+<noscript>
+  <div style="padding:40px 20px;text-align:center;font-family:system-ui">
+    <h1 style="font-size:22px">Forge Infinite needs JavaScript</h1>
+    <p style="color:#B8AEA1">Enable JavaScript to play. Nothing else is required — no install, no plugin.</p>
+  </div>
+</noscript>
+
+<script type="module" src="js/main.js?v=1.0.0"></script>
+</body>
+</html>

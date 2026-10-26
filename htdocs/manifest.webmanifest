@@ -1,0 +1,26 @@
+{
+  "name": "Forge Infinite",
+  "short_name": "Forge",
+  "description": "An idle forge that keeps burning while you're gone. Free in your browser.",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080605",
+  "theme_color": "#12100D",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Collect daily rewards", "url": "./?tab=forge", "description": "Claim quests and streak" },
+    { "name": "Store", "url": "./?tab=shop" },
+    { "name": "Calm mode", "url": "./?calm=1", "description": "No timers, no store pressure" }
+  ]
+}

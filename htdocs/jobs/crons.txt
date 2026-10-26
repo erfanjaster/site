@@ -1,0 +1,14 @@
+# FORGE INFINITE v2 — cPanel → Cron Jobs
+# Everything lives INSIDE htdocs (public_html). Replace HOME + the php path:
+#   find your php binary with `which php` (often /opt/alt/php82/usr/bin/php).
+# Example below assumes the game is at /home/USER/public_html/ (domain root).
+# For a subfolder install use /home/USER/public_html/game/jobs/... instead.
+
+# Hourly :15 — purge expired sessions, rate-limit rows, stale cache, events >90d
+15 * * * * /usr/local/bin/php /home/USER/public_html/jobs/cleanup.php >/dev/null 2>&1
+
+# Hourly :45 — economy snapshot + inflation alarm (exit code 2 = alarm)
+45 * * * * /usr/local/bin/php /home/USER/public_html/jobs/economy.php >>/home/USER/public_html/storage/economy.log 2>&1
+
+# Daily 03:10 UTC — online backup into storage/backup/ (keeps the 7 newest)
+10 3 * * * /usr/local/bin/php /home/USER/public_html/jobs/backup.php >>/home/USER/public_html/storage/backup.log 2>&1

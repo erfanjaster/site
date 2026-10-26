@@ -1,0 +1,1740 @@
+{
+  "_meta": {
+    "game": "Forge Infinite",
+    "version": "1.0",
+    "date": "2026-10-25",
+    "note": "Single source of truth for all balance numbers. Ship this file to the client as JSON and mirror it server-side in PHP. NEVER trust client values.",
+    "currency_symbols": {
+      "gold": "🪵",
+      "gems": "💎",
+      "tokens": "🎖️",
+      "energy": "⚡"
+    }
+  },
+  "generators": [
+    {
+      "id": "apprentice",
+      "name": "Apprentice",
+      "icon": "🧑‍🔧",
+      "tier": 1,
+      "base_prod": 1,
+      "prod_growth": 1.0,
+      "base_cost": 15,
+      "cost_growth": 1.18,
+      "unlock_level": 1,
+      "need_prev_count": 0,
+      "payback_secs_at_L1": 15.0,
+      "payback_secs_at_L10": 5.3
+    },
+    {
+      "id": "workbench",
+      "name": "Wooden Workbench",
+      "icon": "🪚",
+      "tier": 1,
+      "base_prod": 8,
+      "prod_growth": 1.0,
+      "base_cost": 120,
+      "cost_growth": 1.19,
+      "unlock_level": 2,
+      "need_prev_count": 10,
+      "payback_secs_at_L1": 15.0,
+      "payback_secs_at_L10": 5.3
+    },
+    {
+      "id": "flywheel",
+      "name": "Flywheel",
+      "icon": "⚙️",
+      "tier": 2,
+      "base_prod": 47,
+      "prod_growth": 1.0,
+      "base_cost": 1000,
+      "cost_growth": 1.2,
+      "unlock_level": 5,
+      "need_prev_count": 15,
+      "payback_secs_at_L1": 19.1,
+      "payback_secs_at_L10": 7.0
+    },
+    {
+      "id": "workshop",
+      "name": "Small Workshop",
+      "icon": "🏭",
+      "tier": 2,
+      "base_prod": 260,
+      "prod_growth": 1.0,
+      "base_cost": 8000,
+      "cost_growth": 1.21,
+      "unlock_level": 9,
+      "need_prev_count": 20,
+      "payback_secs_at_L1": 25.0,
+      "payback_secs_at_L10": 9.5
+    },
+    {
+      "id": "smelter",
+      "name": "Smelter",
+      "icon": "🔥",
+      "tier": 3,
+      "base_prod": 1400,
+      "prod_growth": 1.0,
+      "base_cost": 60000,
+      "cost_growth": 1.22,
+      "unlock_level": 15,
+      "need_prev_count": 25,
+      "payback_secs_at_L1": 30.0,
+      "payback_secs_at_L10": 11.9
+    },
+    {
+      "id": "assembly",
+      "name": "Assembly Line",
+      "icon": "🤖",
+      "tier": 3,
+      "base_prod": 7800,
+      "prod_growth": 1.0,
+      "base_cost": 450000,
+      "cost_growth": 1.23,
+      "unlock_level": 22,
+      "need_prev_count": 25,
+      "payback_secs_at_L1": 33.3,
+      "payback_secs_at_L10": 13.7
+    },
+    {
+      "id": "robot",
+      "name": "Auto-Robot",
+      "icon": "🦾",
+      "tier": 4,
+      "base_prod": 44000,
+      "prod_growth": 1.0,
+      "base_cost": 3500000,
+      "cost_growth": 1.24,
+      "unlock_level": 30,
+      "need_prev_count": 30,
+      "payback_secs_at_L1": 36.4,
+      "payback_secs_at_L10": 15.5
+    },
+    {
+      "id": "cloudplant",
+      "name": "Cloud Factory",
+      "icon": "☁️",
+      "tier": 4,
+      "base_prod": 260000,
+      "prod_growth": 1.0,
+      "base_cost": 28000000,
+      "cost_growth": 1.25,
+      "unlock_level": 40,
+      "need_prev_count": 30,
+      "payback_secs_at_L1": 46.2,
+      "payback_secs_at_L10": 20.5
+    },
+    {
+      "id": "quantum",
+      "name": "Quantum Core",
+      "icon": "⚛️",
+      "tier": 5,
+      "base_prod": 1600000,
+      "prod_growth": 1.0,
+      "base_cost": 120000000,
+      "cost_growth": 1.26,
+      "unlock_level": 52,
+      "need_prev_count": 32,
+      "payback_secs_at_L1": 59.4,
+      "payback_secs_at_L10": 27.4
+    },
+    {
+      "id": "riftgate",
+      "name": "Rift Gate",
+      "icon": "🌀",
+      "tier": 5,
+      "base_prod": 12000000,
+      "prod_growth": 1.0,
+      "base_cost": 900000000,
+      "cost_growth": 1.27,
+      "unlock_level": 65,
+      "need_prev_count": 35,
+      "payback_secs_at_L1": 75.0,
+      "payback_secs_at_L10": 35.9
+    }
+  ],
+  "formulas": {
+    "upgrade_cost": "base_cost * cost_growth^(level)",
+    "upgrade_prod": "base_prod * level        // prod_growth = 1.00 → LINEAR; this is deliberate (see pacing_note)",
+    "gps_raw": "sum(upgrade_prod) for level > 0",
+    "gps": "gps_raw * prestige_mult * skill_mult * buff_mult * zone_mult",
+    "prestige_mult": "1 + 0.02 * sparks",
+    "click_value": "(base_click + 0.05 * gps_raw) * click_skill_mult * combo_mult * golden_mult",
+    "base_click": "1 + prestige_level",
+    "xp_to_next": "floor(100 * 1.35^(level-1))",
+    "sparks_on_prestige": "floor(sqrt(lifetime_gold_this_run / 1e6))",
+    "offline_gain": "floor(gps * min(now - last_settle, offline_cap) * offline_efficiency)",
+    "battle_power": "(sum(level*tier) + 100*prestige_level) * war_doctrine_mult",
+    "win_chance": "atk_power / (atk_power + def_power)"
+  },
+  "idle": {
+    "offline_efficiency_base": 0.5,
+    "offline_efficiency_per_skill": 0.05,
+    "offline_cap_secs_base": 28800,
+    "offline_cap_per_skill_secs": 3600,
+    "offline_cap_secs_max": 64800,
+    "settle_min_secs": 30,
+    "sync_interval_ms_active": 10000,
+    "sync_interval_ms_hidden_multiplier": 6
+  },
+  "combo": {
+    "window_ms": 2000,
+    "per_click_bonus": 0.02,
+    "max_bonus": 1.0,
+    "crit_chance": 0.05,
+    "crit_multiplier": 10,
+    "crit_every_n_clicks": 10
+  },
+  "golden_click": {
+    "min_spawn_secs": 45,
+    "max_spawn_secs": 180,
+    "duration_secs": 15,
+    "reward_types": [
+      {
+        "type": "gps_multiplier",
+        "value": 25,
+        "weight": 60
+      },
+      {
+        "type": "instant_gps_minutes",
+        "value": 5,
+        "weight": 30
+      },
+      {
+        "type": "gems",
+        "value": 1,
+        "weight": 10
+      }
+    ]
+  },
+  "idle_surge": {
+    "chance_per_min": 0.166,
+    "multiplier": 7,
+    "duration_secs": 30
+  },
+  "prestige": {
+    "formula": "sparks = floor(coef * (lifetime_gold_this_run / divisor) ** exponent)",
+    "coef": 3.0,
+    "divisor": 1000000.0,
+    "exponent": 0.4,
+    "gps_bonus_per_spark": 0.02,
+    "min_sparks_to_prestige": 5,
+    "gate_multiplier": 1.75,
+    "gate": "potential_sparks >= ceil(current_sparks * gate_multiplier)",
+    "min_run_days": 0,
+    "keeps": [
+      "cosmetics",
+      "achievements",
+      "titles",
+      "collection",
+      "clan",
+      "sparks"
+    ],
+    "resets": [
+      "gold",
+      "generator_levels",
+      "skills",
+      "energy"
+    ],
+    "reference_curve_30d_sim": [
+      {
+        "day": 2,
+        "sparks": 24,
+        "mult": 1.48
+      },
+      {
+        "day": 4,
+        "sparks": 43,
+        "mult": 1.86
+      },
+      {
+        "day": 7,
+        "sparks": 153,
+        "mult": 4.06
+      },
+      {
+        "day": 12,
+        "sparks": 410,
+        "mult": 9.2
+      },
+      {
+        "day": 17,
+        "sparks": 891,
+        "mult": 18.82
+      },
+      {
+        "day": 22,
+        "sparks": 4930,
+        "mult": 99.62
+      },
+      {
+        "day": 29,
+        "sparks": 15330,
+        "mult": 307.58
+      }
+    ],
+    "pacing_targets": {
+      "first_prestige_day": [
+        2,
+        4
+      ],
+      "prestiges_in_30_days": [
+        5,
+        10
+      ],
+      "multiplier_at_day30_min": 100,
+      "rift_gate_day": [
+        10,
+        20
+      ]
+    }
+  },
+  "skills": [
+    {
+      "id": "sharp_hands",
+      "name": "Sharp Hands",
+      "max": 20,
+      "effect": "click_value",
+      "per_level": 0.1,
+      "base_cost": 5000,
+      "growth": 1.6
+    },
+    {
+      "id": "efficient_forge",
+      "name": "Efficient Forge",
+      "max": 20,
+      "effect": "gps",
+      "per_level": 0.05,
+      "base_cost": 25000,
+      "growth": 1.7
+    },
+    {
+      "id": "night_shift",
+      "name": "Night Shift",
+      "max": 10,
+      "effect": "offline",
+      "per_level": 0.05,
+      "base_cost": 100000,
+      "growth": 1.9
+    },
+    {
+      "id": "lucky_star",
+      "name": "Lucky Star",
+      "max": 10,
+      "effect": "drop_rate",
+      "per_level": 0.03,
+      "base_cost": 150000,
+      "growth": 2.0
+    },
+    {
+      "id": "bargainer",
+      "name": "Bargainer",
+      "max": 10,
+      "effect": "cost_reduction",
+      "per_level": 0.01,
+      "base_cost": 200000,
+      "growth": 2.1
+    },
+    {
+      "id": "stamina",
+      "name": "Stamina",
+      "max": 10,
+      "effect": "energy",
+      "per_level": 1,
+      "base_cost": 80000,
+      "growth": 1.8
+    },
+    {
+      "id": "war_doctrine",
+      "name": "War Doctrine",
+      "max": 15,
+      "effect": "battle_power",
+      "per_level": 0.04,
+      "base_cost": 120000,
+      "growth": 1.9
+    },
+    {
+      "id": "trade_routes",
+      "name": "Trade Routes",
+      "max": 10,
+      "effect": "tax_reduction",
+      "per_level": 0.003,
+      "base_cost": 250000,
+      "growth": 2.2
+    },
+    {
+      "id": "focus",
+      "name": "Focus",
+      "max": 10,
+      "effect": "quest_reward",
+      "per_level": 0.05,
+      "base_cost": 60000,
+      "growth": 1.7
+    },
+    {
+      "id": "insurance",
+      "name": "Insurance",
+      "max": 3,
+      "effect": "streak_freeze",
+      "per_level": 1,
+      "base_cost": 500000,
+      "growth": 3.0
+    }
+  ],
+  "skill_rule_max_total_effect": 1.0,
+  "energy": {
+    "cap_base": 20,
+    "regen_secs_per_point": 600,
+    "battle_cost": 2
+  },
+  "quests_daily": [
+    {
+      "id": "d_clicks",
+      "name": "Click Frenzy",
+      "metric": "clicks",
+      "target": 500,
+      "reward": {
+        "gold": 250000,
+        "xp": 80,
+        "gems": 2
+      }
+    },
+    {
+      "id": "d_buy",
+      "name": "Investor",
+      "metric": "buys",
+      "target": 5,
+      "reward": {
+        "gold": 400000,
+        "xp": 120,
+        "gems": 0
+      }
+    },
+    {
+      "id": "d_crate",
+      "name": "Collector",
+      "metric": "crates",
+      "target": 1,
+      "reward": {
+        "gold": 150000,
+        "xp": 60,
+        "gems": 1
+      }
+    },
+    {
+      "id": "d_earn",
+      "name": "Molten Profits",
+      "metric": "gold_earned",
+      "target": 1000000,
+      "reward": {
+        "gold": 300000,
+        "xp": 100,
+        "gems": 2
+      }
+    },
+    {
+      "id": "d_skill",
+      "name": "Scholar",
+      "metric": "skill_buys",
+      "target": 2,
+      "reward": {
+        "gold": 350000,
+        "xp": 110,
+        "gems": 1
+      }
+    },
+    {
+      "id": "d_session",
+      "name": "Tender the Forge",
+      "metric": "sessions",
+      "target": 3,
+      "reward": {
+        "gold": 200000,
+        "xp": 70,
+        "gems": 1
+      }
+    }
+  ],
+  "quests_active_max": 3,
+  "streak": {
+    "cycle_days": 28,
+    "week1": [
+      {
+        "day": 1,
+        "gems": 5
+      },
+      {
+        "day": 2,
+        "gold": 100000
+      },
+      {
+        "day": 3,
+        "gems": 10
+      },
+      {
+        "day": 4,
+        "gold": 250000
+      },
+      {
+        "day": 5,
+        "gems": 15
+      },
+      {
+        "day": 6,
+        "gold": 500000
+      },
+      {
+        "day": 7,
+        "crate": "rare",
+        "gems": 25
+      }
+    ],
+    "milestones": {
+      "day14": {
+        "gems": 40
+      },
+      "day28": {
+        "crate": "epic",
+        "item": "frame_aurora"
+      }
+    },
+    "freeze_free_per_season": 1,
+    "reset_on_miss": true,
+    "copy_on_miss": "Fresh start! Your streak begins again today ✨"
+  },
+  "loot_tables": {
+    "box_neon": {
+      "name": "Neon Supply Crate",
+      "price_gems": 150,
+      "free_cooldown_hours": 6,
+      "dupe_conversion": {
+        "to": "gold",
+        "pct_of_shop_value": 25
+      },
+      "entries": [
+        {
+          "item": "fx_sparks",
+          "weight": 4000
+        },
+        {
+          "item": "theme_dark",
+          "weight": 2500
+        },
+        {
+          "item": "frame_neon",
+          "weight": 1500
+        },
+        {
+          "item": "bg_galaxy",
+          "weight": 1000
+        },
+        {
+          "item": "fx_confetti",
+          "weight": 600
+        },
+        {
+          "item": "frame_royal",
+          "weight": 250
+        },
+        {
+          "item": "avatar_animated",
+          "weight": 120
+        },
+        {
+          "item": "title_founder",
+          "weight": 30
+        }
+      ],
+      "compliance": {
+        "show_odds_before_purchase": true,
+        "tradable_if_from_paid_crate": false
+      }
+    }
+  },
+  "battle": {
+    "opponent_power_window_pct": 15,
+    "daily_bonus_battles": 5,
+    "win_gold_base": 500,
+    "win_gold_power_pct": 0.1,
+    "win_gold_variance": [
+      0.85,
+      1.15
+    ],
+    "loss_gold_pct_of_win": 0.15,
+    "xp_base": 40,
+    "xp_per_1000_power": 20,
+    "drop_chances": {
+      "common": 0.08,
+      "rare": 0.02,
+      "epic": 0.003
+    },
+    "revenge_free_uses": 1,
+    "seeded_rng": true
+  },
+  "items": [
+    {
+      "id": "frame_neon",
+      "name": "Neon Frame",
+      "slot": "frame",
+      "rarity": "rare",
+      "price_gems": 350,
+      "tradable": true
+    },
+    {
+      "id": "frame_royal",
+      "name": "Royal Gold Frame",
+      "slot": "frame",
+      "rarity": "epic",
+      "price_gems": 900,
+      "tradable": true
+    },
+    {
+      "id": "frame_aurora",
+      "name": "Aurora Frame",
+      "slot": "frame",
+      "rarity": "limited",
+      "price_gems": 1500,
+      "tradable": false
+    },
+    {
+      "id": "bg_galaxy",
+      "name": "Galaxy Background",
+      "slot": "background",
+      "rarity": "rare",
+      "price_gems": 300,
+      "tradable": true
+    },
+    {
+      "id": "avatar_animated",
+      "name": "Animated Portrait",
+      "slot": "avatar",
+      "rarity": "epic",
+      "price_gems": 900,
+      "tradable": true
+    },
+    {
+      "id": "title_founder",
+      "name": "Founder",
+      "slot": "title",
+      "rarity": "legendary",
+      "price_gems": 2500,
+      "edition_limit": 500,
+      "tradable": false
+    },
+    {
+      "id": "title_market",
+      "name": "Market Mogul",
+      "slot": "title",
+      "rarity": "legendary",
+      "acquisition": "achievement_only",
+      "tradable": false
+    },
+    {
+      "id": "fx_sparks",
+      "name": "Spark Particles",
+      "slot": "click_fx",
+      "rarity": "common",
+      "price_gold": 2500000,
+      "tradable": true
+    },
+    {
+      "id": "fx_confetti",
+      "name": "Victory Confetti",
+      "slot": "win_fx",
+      "rarity": "uncommon",
+      "price_gems": 400,
+      "tradable": true
+    },
+    {
+      "id": "fx_fireworks",
+      "name": "Season Fireworks",
+      "slot": "win_fx",
+      "rarity": "limited",
+      "price_gems": 1200,
+      "tradable": false
+    },
+    {
+      "id": "theme_dark",
+      "name": "Dark Theme",
+      "slot": "theme",
+      "rarity": "common",
+      "price_gems": 120,
+      "tradable": true
+    },
+    {
+      "id": "sound_forge",
+      "name": "Forge Sound Pack",
+      "slot": "sound",
+      "rarity": "common",
+      "price_gold": 1800000,
+      "tradable": true
+    },
+    {
+      "id": "pet_ember",
+      "name": "Ember Sprite",
+      "slot": "pet",
+      "rarity": "rare",
+      "price_gems": 650,
+      "tradable": true
+    },
+    {
+      "id": "banner_clan_gold",
+      "name": "Gilded Clan Banner",
+      "slot": "banner",
+      "rarity": "rare",
+      "price_gems": 500,
+      "tradable": true
+    },
+    {
+      "id": "signature",
+      "name": "Custom Signature",
+      "slot": "signature",
+      "rarity": "common",
+      "price_gems": 80,
+      "tradable": false
+    }
+  ],
+  "item_rule": {
+    "power_effect_must_be": 0,
+    "assert_in_tests": true
+  },
+  "market": {
+    "mode": "buyout_only",
+    "tax_pct": 5,
+    "price_floor_gold": 100,
+    "price_cap_multiplier_of_base": 50,
+    "listing_ttl_hours": 48,
+    "max_concurrent_listings": 10,
+    "escrow": true,
+    "require_email_verified": true,
+    "cash_out_allowed": false
+  },
+  "economy": {
+    "target_faucet_sink_ratio": [
+      0.9,
+      1.1
+    ],
+    "alarm_ratio_above": 1.2,
+    "alarm_consecutive_days": 3,
+    "median_gold_alarm_slope_7d_pct": 25,
+    "gold_to_gems_conversion": {
+      "gold": 1000000,
+      "gems": 10,
+      "one_way": true
+    },
+    "daily_model_reference": {
+      "faucet_gold": 14900000,
+      "sink_gold": 14350000,
+      "ratio": 1.04
+    }
+  },
+  "monetization": {
+    "provider_primary": "NOWPayments",
+    "provider_alternative": "CoinGate",
+    "coins_accepted": [
+      "USDT-TRC20",
+      "USDT-ERC20",
+      "USDC",
+      "BTC",
+      "ETH",
+      "LTC",
+      "TON"
+    ],
+    "quote_lock_minutes": 15,
+    "confirmations_required": 1,
+    "instant_grant_under_usd": 5,
+    "idempotent_grant": true,
+    "packs": [
+      {
+        "id": "starter",
+        "usd": 1.99,
+        "gems": 220,
+        "bonus_pct": 0,
+        "label": "Starter"
+      },
+      {
+        "id": "popular",
+        "usd": 4.99,
+        "gems": 600,
+        "bonus_pct": 9,
+        "label": "Popular"
+      },
+      {
+        "id": "best",
+        "usd": 9.99,
+        "gems": 1300,
+        "bonus_pct": 18,
+        "label": "Best Value",
+        "featured": true
+      },
+      {
+        "id": "large",
+        "usd": 24.99,
+        "gems": 3500,
+        "bonus_pct": 27,
+        "label": "Large"
+      },
+      {
+        "id": "whale",
+        "usd": 49.99,
+        "gems": 7500,
+        "bonus_pct": 36,
+        "label": "Mega"
+      }
+    ],
+    "free_gems_per_month_target": 880,
+    "battle_pass": {
+      "season_days": 45,
+      "tiers": 50,
+      "xp_per_tier": 1000,
+      "daily_xp_available": 1500,
+      "premium_usd": 4.99,
+      "premium_gems": 800,
+      "bundle_with_20_skips_usd": 9.99
+    },
+    "guardrails": {
+      "daily_spend_cap_user_adjustable_down_only": true,
+      "calm_mode_param": "?calm=1",
+      "age_gate": true,
+      "banned_words_in_copy": [
+        "bet",
+        "wager",
+        "jackpot",
+        "casino",
+        "gamble"
+      ],
+      "pay_to_continue": false
+    }
+  },
+  "compliance": {
+    "one_way_economy": true,
+    "paid_crate_contents_tradable": false,
+    "odds_always_public": true,
+    "geo_block_paid_crates": [
+      "BE",
+      "NL"
+    ],
+    "no_power_for_sale": true,
+    "note": "Belgian Gaming Commission treats paid loot boxes with TRADEABLE contents as illegal gambling. Rule set R1-R5 in GDD section 13 is mandatory."
+  },
+  "technical": {
+    "sqlite_pragmas": {
+      "journal_mode": "WAL",
+      "busy_timeout": 5000,
+      "synchronous": "NORMAL",
+      "foreign_keys": "ON",
+      "cache_size": -8000,
+      "wal_autocheckpoint": 500
+    },
+    "transaction_mode": "BEGIN IMMEDIATE",
+    "max_transaction_ms": 5,
+    "endpoint": "api/state.php (aggregated)",
+    "poll_interval_secs_by_online": [
+      [
+        0,
+        10
+      ],
+      [
+        120,
+        20
+      ],
+      [
+        300,
+        30
+      ]
+    ],
+    "cache_ttl_secs": {
+      "leaderboard": 60,
+      "shop": 300,
+      "market_page1": 15,
+      "config": "deploy"
+    },
+    "write_coalescing_flush_secs": 300,
+    "target_api_p95_ms": 150,
+    "target_writes_per_sec_at_1000ccu": 20,
+    "vps_migration_triggers": [
+      "entry_processes_peak_pct>80",
+      "write_queue_p95_ms>200",
+      "db_file_gb>4"
+    ]
+  },
+  "anti_cheat": {
+    "click_rate_limit_per_sec": 25,
+    "server_time_only": true,
+    "idempotency_keys": true,
+    "hmac_request_signing": true,
+    "ip_daily_signup_cap": 3,
+    "nightly_anomaly_scan": true
+  },
+  "kpi_targets": {
+    "d1": 0.4,
+    "d7": 0.12,
+    "d30": 0.05,
+    "median_session_min": [
+      8,
+      15
+    ],
+    "sessions_per_day": 2.5,
+    "onboarding_completion": 0.85,
+    "time_to_first_upgrade_sec": 20,
+    "payer_conversion": [
+      0.01,
+      0.03
+    ],
+    "arppu_usd_month": [
+      8,
+      15
+    ],
+    "api_p95_ms": 150
+  },
+  "pacing": {
+    "note": "Measured by tests/playthrough.php against the live API, and cross-checked with an offline simulator. A casual player (2h active/day) hits these days; a heavy player is ~30% faster.",
+    "generator_first_purchase_days": {
+      "apprentice": 1,
+      "workbench": 1,
+      "flywheel": 1,
+      "workshop": 1,
+      "smelter": 2,
+      "assembly": 4,
+      "robot": 7,
+      "cloudplant": 12,
+      "quantum": 21,
+      "riftgate": 21
+    },
+    "tuning_knobs": {
+      "primary": "base_cost (±20% moves a generator by ~1-2 days)",
+      "secondary": "need_prev_count (the tier ladder)",
+      "tertiary": "cost_growth (±0.01 is a BIG late-game change)",
+      "prestige": "coef / divisor / exponent / gate_multiplier",
+      "never": "prod_growth must stay 1.00 — see balance_warnings"
+    },
+    "measured_by": "tests/playthrough.php — drives the live HTTP API as a casual player (2h active/day @4 taps/s, 10h away) for 30 in-game days",
+    "measured_30d_summary": {
+      "first_prestige_day": 2,
+      "prestiges": 7,
+      "final_sparks": 15333,
+      "final_multiplier": 307.6,
+      "final_level": 18,
+      "lifetime_gold": "2.01aa",
+      "first_cosmetic_day": 1,
+      "level_gifts_fired": 4,
+      "requests_per_day": 82
+    }
+  },
+  "balance_warnings": [
+    "prod_growth must stay <= 1.02. With linear production, any prod_growth above ~1.02 makes each level RELATIVELY cheaper and the game completes itself in minutes.",
+    "Judge pacing by 'days until generator N', never by payback seconds — payback SHRINKS as levels rise, which is normal and desirable.",
+    "First prestige must land on day 2-4. Earlier wastes the reveal; later and players churn before seeing the meta loop.",
+    "The prestige multiplier must not plateau inside 30 days. A sqrt curve plateaus; the 0.4-power curve does not.",
+    "click_value is coupled to GPS (5% of raw GPS per tap). If you raise that, the generator ladder collapses — clicks out-earn idle income.",
+    "Keep the cheapest cosmetic within the first 20 minutes of play. An unreachable store is an untested store."
+  ],
+  "catalog": [
+    {
+      "id": "frame_neon",
+      "name": "Neon Frame",
+      "slot": "frame",
+      "rarity": "rare",
+      "price_gems": 350,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "ring": "0 0 0 2px #60A5FA, 0 0 16px rgba(96,165,250,.55)",
+        "anim": "pulse"
+      }
+    },
+    {
+      "id": "frame_royal",
+      "name": "Royal Gold Frame",
+      "slot": "frame",
+      "rarity": "epic",
+      "price_gems": 900,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "ring": "0 0 0 3px #FBBF24, 0 0 22px rgba(251,191,36,.55)",
+        "anim": "shimmer"
+      }
+    },
+    {
+      "id": "frame_aurora",
+      "name": "Aurora Frame",
+      "slot": "frame",
+      "rarity": "limited",
+      "price_gems": 1500,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "ring": "0 0 0 3px transparent",
+        "bg": "linear-gradient(135deg,#2DD4BF,#60A5FA,#C084FC,#FB7185)",
+        "anim": "hue"
+      }
+    },
+    {
+      "id": "frame_ember",
+      "name": "Ember Frame",
+      "slot": "frame",
+      "rarity": "uncommon",
+      "price_gems": 180,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "ring": "0 0 0 2px #FF7A18, 0 0 14px rgba(255,122,24,.45)"
+      }
+    },
+    {
+      "id": "frame_steel",
+      "name": "Steel Frame",
+      "slot": "frame",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 35000,
+      "tradable": 1,
+      "css": {
+        "ring": "0 0 0 2px #A8A29E"
+      }
+    },
+    {
+      "id": "bg_galaxy",
+      "name": "Galaxy Background",
+      "slot": "background",
+      "rarity": "rare",
+      "price_gems": 300,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "bg": "radial-gradient(circle at 25% 15%,#3B2A6B,#0B0B1E 70%)"
+      }
+    },
+    {
+      "id": "bg_forge",
+      "name": "Molten Forge Background",
+      "slot": "background",
+      "rarity": "uncommon",
+      "price_gems": null,
+      "price_gold": 120000,
+      "tradable": 1,
+      "css": {
+        "bg": "radial-gradient(circle at 50% 120%,#7C2D12,#14120F 65%)"
+      }
+    },
+    {
+      "id": "bg_aurora",
+      "name": "Aurora Background",
+      "slot": "background",
+      "rarity": "epic",
+      "price_gems": 850,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "bg": "linear-gradient(160deg,#062C33,#123B2A 45%,#2A1B3D)",
+        "anim": "hue"
+      }
+    },
+    {
+      "id": "bg_bone",
+      "name": "Bone Light Background",
+      "slot": "background",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 20000,
+      "tradable": 1,
+      "css": {
+        "bg": "linear-gradient(180deg,#F6F1E7,#E4DCCB)"
+      }
+    },
+    {
+      "id": "avatar_animated",
+      "name": "Animated Portrait",
+      "slot": "avatar",
+      "rarity": "epic",
+      "price_gems": 900,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "anim": "float",
+        "glyph": "🔥"
+      }
+    },
+    {
+      "id": "avatar_mask",
+      "name": "Forge Mask Portrait",
+      "slot": "avatar",
+      "rarity": "rare",
+      "price_gems": 420,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "glyph": "⚒️"
+      }
+    },
+    {
+      "id": "title_founder",
+      "name": "Founder",
+      "slot": "title",
+      "rarity": "legendary",
+      "price_gems": 2500,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "edition": 500,
+        "bg": "linear-gradient(90deg,#C084FC,#FB7185)",
+        "pad": "2px 8px",
+        "rad": 6,
+        "color": "#fff"
+      }
+    },
+    {
+      "id": "title_market",
+      "name": "Market Mogul",
+      "slot": "title",
+      "rarity": "legendary",
+      "price_gems": null,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "achievement": "ach_gold_1b",
+        "bg": "linear-gradient(90deg,#FBBF24,#FF7A18)",
+        "pad": "2px 8px",
+        "rad": 6,
+        "color": "#1A1206"
+      }
+    },
+    {
+      "id": "title_tireless",
+      "name": "Tireless",
+      "slot": "title",
+      "rarity": "epic",
+      "price_gems": null,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "achievement": "ach_click_100k",
+        "color": "#F5EFE6",
+        "border": "1px solid #4E4740",
+        "pad": "2px 8px",
+        "rad": 6
+      }
+    },
+    {
+      "id": "fx_sparks",
+      "name": "Spark Particles",
+      "slot": "click_fx",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 45000,
+      "tradable": 1,
+      "css": {
+        "particles": 10,
+        "color": "#FFC53D",
+        "life": 620
+      }
+    },
+    {
+      "id": "fx_embers",
+      "name": "Ember Storm",
+      "slot": "click_fx",
+      "rarity": "rare",
+      "price_gems": 380,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "particles": 26,
+        "color": "#FF7A18",
+        "life": 900,
+        "glow": 1
+      }
+    },
+    {
+      "id": "fx_confetti",
+      "name": "Victory Confetti",
+      "slot": "win_fx",
+      "rarity": "uncommon",
+      "price_gems": 400,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "particles": 70,
+        "spread": 360
+      }
+    },
+    {
+      "id": "fx_fireworks",
+      "name": "Season Fireworks",
+      "slot": "win_fx",
+      "rarity": "limited",
+      "price_gems": 1200,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "particles": 130,
+        "palette": [
+          "#FB7185",
+          "#FBBF24",
+          "#2DD4BF"
+        ]
+      }
+    },
+    {
+      "id": "theme_midnight",
+      "name": "Midnight Theme",
+      "slot": "theme",
+      "rarity": "uncommon",
+      "price_gems": 220,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "theme": "midnight"
+      }
+    },
+    {
+      "id": "theme_verdant",
+      "name": "Verdant Theme",
+      "slot": "theme",
+      "rarity": "rare",
+      "price_gems": 420,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "theme": "verdant"
+      }
+    },
+    {
+      "id": "theme_bone",
+      "name": "Bone Light Theme",
+      "slot": "theme",
+      "rarity": "epic",
+      "price_gems": 900,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "theme": "bone"
+      }
+    },
+    {
+      "id": "sound_forge",
+      "name": "Forge Sound Pack",
+      "slot": "sound",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 30000,
+      "tradable": 1,
+      "css": {
+        "sfx": "forge"
+      }
+    },
+    {
+      "id": "pet_ember",
+      "name": "Ember Sprite",
+      "slot": "pet",
+      "rarity": "rare",
+      "price_gems": 650,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "glyph": "🐉",
+        "anim": "float"
+      }
+    },
+    {
+      "id": "pet_coal",
+      "name": "Coal Golem",
+      "slot": "pet",
+      "rarity": "uncommon",
+      "price_gems": null,
+      "price_gold": 250000,
+      "tradable": 1,
+      "css": {
+        "glyph": "🪨",
+        "anim": "bob"
+      }
+    },
+    {
+      "id": "banner_clan_gold",
+      "name": "Gilded Clan Banner",
+      "slot": "banner",
+      "rarity": "rare",
+      "price_gems": 500,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "grad": "linear-gradient(90deg,#FBBF24,#8B6914)"
+      }
+    },
+    {
+      "id": "signature",
+      "name": "Custom Signature",
+      "slot": "signature",
+      "rarity": "common",
+      "price_gems": 80,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "sig": 1
+      }
+    },
+    {
+      "id": "badge_first",
+      "name": "First Spark Badge",
+      "slot": "badge",
+      "rarity": "uncommon",
+      "price_gems": null,
+      "price_gold": null,
+      "tradable": 0,
+      "css": {
+        "achievement": "ach_prestige_1",
+        "glyph": "✦"
+      }
+    },
+    {
+      "id": "fx_ember_trail",
+      "name": "Ember Trail",
+      "slot": "click_fx",
+      "rarity": "common",
+      "price_gems": 25,
+      "price_gold": null,
+      "tradable": 1,
+      "css": {
+        "particles": 8,
+        "color": "#FF7A18",
+        "life": 520
+      },
+      "note": "Priced in gems so the 50 welcome gems are immediately meaningful."
+    },
+    {
+      "id": "frame_oak",
+      "name": "Oak Frame",
+      "slot": "frame",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 1800,
+      "tradable": 1,
+      "css": {
+        "ring": "0 0 0 2px #8B6F47"
+      }
+    },
+    {
+      "id": "bg_soot",
+      "name": "Soot Background",
+      "slot": "background",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 900,
+      "tradable": 1,
+      "css": {
+        "bg": "linear-gradient(180deg,#1C1917,#0B0A09)"
+      }
+    },
+    {
+      "id": "badge_spark",
+      "name": "Spark Badge",
+      "slot": "badge",
+      "rarity": "common",
+      "price_gems": null,
+      "price_gold": 4000,
+      "tradable": 1,
+      "css": {
+        "glyph": "✦"
+      }
+    }
+  ],
+  "crates": {
+    "box_neon": {
+      "name": "Neon Supply Crate",
+      "slot": "crate",
+      "price_gems": 150,
+      "free_cooldown_hours": 6,
+      "dupe_gold_pct": 25,
+      "entries": [
+        [
+          "fx_sparks",
+          4000
+        ],
+        [
+          "theme_midnight",
+          2500
+        ],
+        [
+          "frame_neon",
+          1500
+        ],
+        [
+          "bg_galaxy",
+          1000
+        ],
+        [
+          "fx_confetti",
+          600
+        ],
+        [
+          "frame_royal",
+          250
+        ],
+        [
+          "avatar_animated",
+          120
+        ],
+        [
+          "title_founder",
+          30
+        ]
+      ]
+    },
+    "box_rare": {
+      "name": "Rare Supply Crate",
+      "slot": "crate",
+      "price_gems": 400,
+      "free_cooldown_hours": 0,
+      "dupe_gold_pct": 30,
+      "entries": [
+        [
+          "frame_neon",
+          3000
+        ],
+        [
+          "bg_galaxy",
+          2400
+        ],
+        [
+          "fx_embers",
+          1800
+        ],
+        [
+          "frame_royal",
+          1200
+        ],
+        [
+          "avatar_animated",
+          700
+        ],
+        [
+          "theme_verdant",
+          500
+        ],
+        [
+          "pet_ember",
+          300
+        ],
+        [
+          "title_founder",
+          100
+        ]
+      ]
+    }
+  },
+  "achievements": [
+    {
+      "id": "ach_click_100",
+      "name": "Spark Starter",
+      "desc": "Click 100 times",
+      "metric": "clicks",
+      "target": 100,
+      "reward": {
+        "gems": 5,
+        "xp": 50
+      },
+      "tier": 1
+    },
+    {
+      "id": "ach_click_1k",
+      "name": "Steady Hands",
+      "desc": "Click 1,000 times",
+      "metric": "clicks",
+      "target": 1000,
+      "reward": {
+        "gems": 10,
+        "xp": 120
+      },
+      "tier": 1
+    },
+    {
+      "id": "ach_click_10k",
+      "name": "Relentless",
+      "desc": "Click 10,000 times",
+      "metric": "clicks",
+      "target": 10000,
+      "reward": {
+        "gems": 25,
+        "xp": 400
+      },
+      "tier": 2
+    },
+    {
+      "id": "ach_click_100k",
+      "name": "Tireless",
+      "desc": "Click 100,000 times",
+      "metric": "clicks",
+      "target": 100000,
+      "reward": {
+        "gems": 60,
+        "xp": 1500,
+        "item": "title_tireless"
+      },
+      "tier": 3
+    },
+    {
+      "id": "ach_gold_1m",
+      "name": "First Million",
+      "desc": "Earn 1M gold lifetime",
+      "metric": "gold_earned",
+      "target": 1000000,
+      "reward": {
+        "gems": 10,
+        "xp": 150
+      },
+      "tier": 1
+    },
+    {
+      "id": "ach_gold_100m",
+      "name": "Molten Baron",
+      "desc": "Earn 100M gold lifetime",
+      "metric": "gold_earned",
+      "target": 100000000,
+      "reward": {
+        "gems": 40,
+        "xp": 900
+      },
+      "tier": 2
+    },
+    {
+      "id": "ach_gold_1b",
+      "name": "Market Mogul",
+      "desc": "Earn 1B gold lifetime",
+      "metric": "gold_earned",
+      "target": 1000000000,
+      "reward": {
+        "gems": 120,
+        "xp": 3000,
+        "item": "title_market"
+      },
+      "tier": 3
+    },
+    {
+      "id": "ach_gen1_25",
+      "name": "Foreman",
+      "desc": "Apprentice level 25",
+      "metric": "gen_apprentice",
+      "target": 25,
+      "reward": {
+        "gems": 8,
+        "xp": 100
+      },
+      "tier": 1
+    },
+    {
+      "id": "ach_gen5_1",
+      "name": "Ignition",
+      "desc": "Own a Smelter",
+      "metric": "gen_smelter",
+      "target": 1,
+      "reward": {
+        "gems": 15,
+        "xp": 200
+      },
+      "tier": 1
+    },
+    {
+      "id": "ach_gen10_1",
+      "name": "Reality Bender",
+      "desc": "Own a Rift Gate",
+      "metric": "gen_riftgate",
+      "target": 1,
+      "reward": {
+        "gems": 80,
+        "xp": 1200
+      },
+      "tier": 3
+    },
+    {
+      "id": "ach_prestige_1",
+      "name": "First Spark",
+      "desc": "Prestige once",
+      "metric": "prestige_count",
+      "target": 1,
+      "reward": {
+        "gems": 50,
+        "xp": 600,
+        "item": "badge_first"
+      },
+      "tier": 2
+    },
+    {
+      "id": "ach_prestige_5",
+      "name": "Reborn",
+      "desc": "Prestige 5 times",
+      "metric": "prestige_count",
+      "target": 5,
+      "reward": {
+        "gems": 150,
+        "xp": 2000
+      },
+      "tier": 3
+    },
+    {
+      "id": "ach_level_10",
+      "name": "Journeyman",
+      "desc": "Reach level 10",
+      "metric": "level",
+      "target": 10,
+      "reward": {
+        "gems": 12,
+        "xp": 150
+      },
+      "tier": 1
+    },
+    {
+      "id": "ach_level_25",
+      "name": "Master Smith",
+      "desc": "Reach level 25",
+      "metric": "level",
+      "target": 25,
+      "reward": {
+        "gems": 45,
+        "xp": 800
+      },
+      "tier": 2
+    },
+    {
+      "id": "ach_streak_7",
+      "name": "Week Strong",
+      "desc": "7-day login streak",
+      "metric": "streak_days",
+      "target": 7,
+      "reward": {
+        "gems": 30,
+        "xp": 300
+      },
+      "tier": 2
+    },
+    {
+      "id": "ach_collect_10",
+      "name": "Collector",
+      "desc": "Own 10 cosmetics",
+      "metric": "items_owned",
+      "target": 10,
+      "reward": {
+        "gems": 35,
+        "xp": 400
+      },
+      "tier": 2
+    },
+    {
+      "id": "ach_collect_20",
+      "name": "Curator",
+      "desc": "Own 20 cosmetics",
+      "metric": "items_owned",
+      "target": 20,
+      "reward": {
+        "gems": 90,
+        "xp": 1200
+      },
+      "tier": 3
+    }
+  ],
+  "gem_packs": [
+    {
+      "id": "starter",
+      "usd": 1.99,
+      "gems": 220,
+      "label": "Starter"
+    },
+    {
+      "id": "popular",
+      "usd": 4.99,
+      "gems": 600,
+      "label": "Popular",
+      "bonus": 9
+    },
+    {
+      "id": "best",
+      "usd": 9.99,
+      "gems": 1300,
+      "label": "Best Value",
+      "bonus": 18,
+      "featured": true
+    },
+    {
+      "id": "large",
+      "usd": 24.99,
+      "gems": 3500,
+      "label": "Large",
+      "bonus": 27
+    },
+    {
+      "id": "whale",
+      "usd": 49.99,
+      "gems": 7500,
+      "label": "Mega",
+      "bonus": 36
+    }
+  ],
+  "slots": [
+    "avatar",
+    "frame",
+    "background",
+    "title",
+    "click_fx",
+    "win_fx",
+    "theme",
+    "sound",
+    "pet",
+    "banner",
+    "signature",
+    "badge"
+  ],
+  "level_rewards": [
+    {
+      "level": 2,
+      "item": "fx_sparks",
+      "why": "teaches click FX + the equip flow in the first 2 minutes"
+    },
+    {
+      "level": 3,
+      "gems": 25,
+      "why": "first taste of the premium currency"
+    },
+    {
+      "level": 4,
+      "item": "bg_soot",
+      "why": "profile starts to look like theirs"
+    },
+    {
+      "level": 6,
+      "item": "frame_oak",
+      "why": "the highest-visibility slot"
+    },
+    {
+      "level": 8,
+      "gems": 40
+    },
+    {
+      "level": 10,
+      "item": "theme_midnight",
+      "why": "a whole-game reskin as a milestone reward"
+    },
+    {
+      "level": 12,
+      "gems": 60
+    },
+    {
+      "level": 15,
+      "item": "badge_spark"
+    },
+    {
+      "level": 18,
+      "gems": 80
+    },
+    {
+      "level": 20,
+      "item": "pet_coal"
+    },
+    {
+      "level": 25,
+      "gems": 150
+    },
+    {
+      "level": 30,
+      "item": "fx_embers"
+    }
+  ]
+}
